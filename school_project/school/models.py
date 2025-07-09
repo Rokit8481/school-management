@@ -1,16 +1,14 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
-
-# Модель предмету
 class Subject(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique = True)
     description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
 
 
-# Модель вчителя
 class Teacher(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -21,9 +19,8 @@ class Teacher(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
-# Модель класу
 class Class(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, unique = True)
     class_teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, blank=True, related_name='class_teacher')
 
     def __str__(self):
@@ -61,3 +58,13 @@ class Schedule(models.Model):
 
     def __str__(self):
         return f"{self.class_group} - {self.subject} ({self.get_weekday_display()})"
+
+class Grade(models.Model):
+    student = models.ForeignKey(Student, on_delete = models.CASCADE, related_name = "grades")
+    teacher = models.ForeignKey(Teacher, on_delete = models.SET_NULL, null = True, related_name = 'grades_given')
+    subject = models.ForeignKey(Subject, on_delete = models.CASCADE, related_name = "grades")
+    weekday = models.CharField(max_length=3, choices=Schedule.WEEKDAYS)
+    grade = models.IntegerField(validators = [MinValueValidator(1), MaxValueValidator(12)], )
+
+    def __str__(self):
+        return f"{self.student} - {self.subject} - {self.grade}"
