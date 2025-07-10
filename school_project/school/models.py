@@ -60,11 +60,11 @@ class Schedule(models.Model):
         return f"{self.class_group} - {self.subject} ({self.get_weekday_display()})"
 
 class Grade(models.Model):
-    student = models.ForeignKey(Student, on_delete = models.CASCADE, related_name = "grades")
-    teacher = models.ForeignKey(Teacher, on_delete = models.SET_NULL, null = True, related_name = 'grades_given')
-    subject = models.ForeignKey(Subject, on_delete = models.CASCADE, related_name = "grades")
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name="grades")
+    teacher = models.ForeignKey(Teacher, on_delete=models.SET_NULL, null=True, related_name='grades_given')
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="grades") 
     weekday = models.CharField(max_length=3, choices=Schedule.WEEKDAYS)
-    grade = models.IntegerField(validators = [MinValueValidator(1), MaxValueValidator(12)], )
+    grade = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)])
 
     def __str__(self):
         return f"{self.student} - {self.subject} - {self.grade}"
